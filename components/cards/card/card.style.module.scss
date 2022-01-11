@@ -1,0 +1,13 @@
+
+.card {
+    box-shadow:  0 0 5px 1px rgba(0, 0, 0, 0.200);
+    padding: 16px;
+    border-radius: 4px;
+    transition-duration: 200ms;
+    height: 100%;
+    width: 100%;
+    user-select: none;
+
+    h2 { margin: 0 0 8px 0 }
+    p { margin: 4px 0 }
+}

@@ -1,0 +1,22 @@
+
+#home-page {
+    padding: $mediumPadding 0;
+
+    #home-cards {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        
+        .home-card {
+            flex: 1 1 calc(50% - (#{$mediumMargin} * 2));
+            margin: $mediumMargin;
+            min-width: 350px;
+            transition-duration: 200ms;
+
+            &:hover {
+                transform: scale(1.03);
+                cursor: pointer;
+            }
+        }
+    }
+}

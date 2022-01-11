@@ -1,0 +1,25 @@
+
+.playbar {
+    bottom: 0;
+    left: 0;
+    right: 0;
+    position: fixed;
+    background-color: rgb(14, 14, 14);
+    max-height: 450px;
+    min-height: 115px;
+    width: 100%;
+
+    .playerWindow {
+        height: 100%;
+        width: calc(100% - 35%);
+        background-color: rgba(0, 0, 0, 0.300);
+    }
+}
+
+.expendBtn {
+    width: 100%;
+    text-align: center;
+    background-color: rgba(0, 0, 0, 0.3);
+    cursor: grab;
+    position: relative;
+}
