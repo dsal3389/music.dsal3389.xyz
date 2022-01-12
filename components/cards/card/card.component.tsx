@@ -1,4 +1,5 @@
-import { useEffect, useRef } from 'react';
+import { useRouter } from 'next/router';
+import React, { useEffect, useRef } from 'react';
 import Link from 'next/link';
 import css  from './card.style.module.scss';
 
@@ -7,10 +8,19 @@ interface CardProps {
     description: string,
     color?: string | ((ref:HTMLDivElement) => void),
     link?: string,
+    className?: string,
+    onClick?: () => void,
 };
 
-const CardComponent = ({ title, description, color, link }: CardProps) => {
+const CardComponent = ({ title, description, color, link, className='', onClick }: CardProps) => {
     const cardRef = useRef(null);
+    const router  = useRouter();
+    const handleClick = (e:any) => {
+        e.preventDefault();
+
+        if(onClick){ onClick(); }
+        if(link){ router.push(link); }
+    }
     
     useEffect(() => {
         const element:HTMLDivElement = cardRef.current!;
@@ -23,13 +33,13 @@ const CardComponent = ({ title, description, color, link }: CardProps) => {
     }, []); // call useEffect only once
 
     return (
-        <Link href={ link || './' }>
-            <div className={ css.card } ref={ cardRef }>
-                <h2>{ title }</h2>
-                <p>{ description }</p>
-            </div>
-        </Link>    
+        <div onClick={ handleClick } className={ css.card + ' ' + className } ref={ cardRef }>
+            <div>
+                <h2 title={ title } >{ title }</h2>
+            </div>    
+            <p>{ description }</p>
+        </div>
     );
 }
 
-export default CardComponent;
+export default React.memo(CardComponent);

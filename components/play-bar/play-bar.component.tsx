@@ -1,11 +1,14 @@
 import React, { createRef  } from 'react';
 import { FontAwesomeIcon }  from '@fortawesome/react-fontawesome';
-import memoize from "memoize-one";
 
-import YouTubePlayerComponent, { YouTubeUpdateStates } from './players/youtube/youtube.component';
+import YouTubePlayerComponent from './players/youtube/youtube.component';
+import SoundcloudPlayerComponent from './players/soundcloud/soundcloud.component';
+import ControlsComponent from './controls/contorls.component';
+import PlaylistComponent from './playlist/playlist.component';
+import PlayerStates from 'youtube-player/dist/constants/PlayerStates';
+
 import Song from '../../config/models/song.model';
 import css  from './play-bar.style.module.scss';
-import SoundcloudPlayerComponent from './players/soundcloud/soundcloud.component';
 
 interface SerializedSong {
     name: string;
@@ -20,12 +23,13 @@ interface PlayBarPlayers {
 }
 
 interface PlayBarState {
-    playlist: SerializedSong[],
+    playlistId: string,
+    serializedPlaylist: SerializedSong[],
+    playlist: Song[],
     playing: boolean,
     height: number,
     currentSong: number,
 }
-
 let __getPlayBar:PlayBar;
 
 /**
@@ -44,6 +48,8 @@ export function getPlayBar(): PlayBar{
  */
 export default class PlayBar extends React.Component{
     state:PlayBarState = {
+        playlistId: '',
+        serializedPlaylist: [],
         playlist: [],
         playing: false,
         height: 0,
@@ -53,15 +59,16 @@ export default class PlayBar extends React.Component{
         youtube: YouTubePlayerComponent,
         soundcloud: SoundcloudPlayerComponent,
     }
-    playerRef;
-    dragBar;
-    currentInterval: any;
+    private playerRef;
+    private dragBar;
+    private playlistContainerRef;
 
     constructor(props: any){
         super(props);
         
         this.playerRef = createRef<HTMLDivElement>();
         this.dragBar   = createRef<HTMLDivElement>();
+        this.playlistContainerRef = createRef<HTMLDivElement>();
 
         __getPlayBar = this;
     }
@@ -85,45 +92,57 @@ export default class PlayBar extends React.Component{
         }
     }
 
-    /* insert a list of songs to start play */
-    setPlaylist = (playlist: Song[]) => {
-        const serialized = playlist.map(this._serializeSong); // note: use memorize-one
-        this.setState({ playlist: serialized, currentSong: 0 });
+    /* 
+    insert a list of songs to start play
+    the id allows the component to identify if the playlist is already playing,
+    the return is a boolean value which indecate if the playlist changed
+    */
+    setPlaylist = (id: string, playlist: Song[]):boolean => {
+        const replace = id !== this.state.playlistId;
+
+        if(replace){
+            const serialized = playlist.map(this._serializeSong);
+            this.setState({ 
+                playlistId: id,
+                playlist: playlist,
+                serializedPlaylist: serialized, 
+                currentSong: 0 
+            });
+        }
+
+        return replace;
     }
 
     /* insert a song to the list */
     addToPlaylist = (song: Song) => {
         const serialized = this._serializeSong(song);
-        this.setState({ playlist: this.state.playlist.push(serialized) });
+        this.setState({ 
+            playlistId: '',
+            playlist: this.state.playlist.push(song),
+            serializedPlaylist: this.state.serializedPlaylist.push(serialized),
+        });
+    }
+
+    playPrev = () => {
+        this.playSong(this.state.currentSong - 1);
     }
 
     playNext = () => {
         this.playSong(this.state.currentSong + 1);
     }
 
+    /**
+     * the playSong function takes an index of the song relative to the playlist,
+     * it does not need to check if the song acully exists or not
+     * because the render component checks it before rendering 
+     * @param index 
+     */
     playSong = (index: number) => {
         this.setState({ currentSong: index });
     }
 
-    test = () => {
-        this.setPlaylist([
-            {
-                name: 'foo',
-                ganer: [],
-                song_id: 'H-0IVL2scXg',
-                platform: 'youtube'
-            },
-            {
-                name: 'foo',
-                ganer: [],
-                song_id: 'adDD43CvrUc',
-                platform: 'youtube'
-            }
-        ]);
-    }
-
     render(): React.ReactNode{
-        const song = this.state.playlist[this.state.currentSong];
+        const song = this.state.serializedPlaylist[this.state.currentSong];
         const playBarStyle = {
             height: this.state.height
         };
@@ -137,26 +156,38 @@ export default class PlayBar extends React.Component{
                 <div className={ css.expendBtn } ref={ this.dragBar }>
                     <FontAwesomeIcon icon='grip-lines'/>
                 </div>
+                <div className={ css.playbarContent }>
+                    <div className={ css.playerWindow }>
+                        { song ? <song.player id={ song.id } events={ song.events } /> : null }
+                    </div>
 
-                <button onClick={ this.test }>test</button>
-                <div className={ css.playerWindow }>
-                    { song ? <song.player id={ song.id } events={ song.events } /> : null }
-                </div>
+                    <div className={ css.side }>
+                        <div className={ css.playlistWindow } ref={ this.playlistContainerRef }>
+                            <PlaylistComponent 
+                                songs={ this.state.playlist } 
+                                current={ this.state.currentSong } 
+                                onChange={ this.playSong }
+                                height={ this.playlistContainerRef.current?.offsetHeight || 0 }
+                            />
+                        </div>
+                        <div className={ css.controllerBar }>
+                            <ControlsComponent />
+                        </div>
+                    </div>
+                </div>    
             </div>
         );
     }
 
-    /* Events and private functions */
-
-    onSongReady = (event:any) => {
+    onSongReady = (player:any) => {
     }
 
     onSongError = (event:any) => {
     }
 
-    onYouTubeStateChange = (event:any) => {
+    onStateChange = (player:any, event:any) => {
         switch(event.data){
-            case YouTubeUpdateStates.ENDED:
+            case PlayerStates.ENDED:
                 return this.playNext();
         }
     }
@@ -164,11 +195,8 @@ export default class PlayBar extends React.Component{
     private _serializeSong = (song: Song): SerializedSong => {
         const events:any = {
             ready: this.onSongReady,
+            stateChange: this.onStateChange,
             error: this.onSongError
-        }
-
-        if(song.platform === 'youtube'){
-            events['stateChange'] = this.onYouTubeStateChange;
         }
 
         return { 

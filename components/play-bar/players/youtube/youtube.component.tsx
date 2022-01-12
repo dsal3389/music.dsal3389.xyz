@@ -8,18 +8,9 @@ type youtubeEvents = 'ready' | 'stateChange' | 'error';
 interface YouTubeProps {
     id: string,
     events?:{
-        [event in youtubeEvents]?: ((e: any) => void)
+        [event in youtubeEvents]?: ((player:any, e?: any) => void)
     }
 }
-
-export const YouTubeUpdateStates = {
-    UNSTARTED: -1,
-    ENDED: 0,
-    PLAYING: 1,
-    PAUSED: 2,
-    BUFFERING: 3,
-    CUED: 5
-};
 
 class YouTubePlayerComponent extends React.Component<YouTubeProps> {
     containerRef;
@@ -35,7 +26,7 @@ class YouTubePlayerComponent extends React.Component<YouTubeProps> {
     }
 
     componentDidUpdate(prevProps:YouTubeProps) {
-        if(prevProps.id != this.props.id) {
+        if(prevProps.id !== this.props.id) {
             this.player.loadVideoById(this.props.id);
         }
     }
@@ -51,6 +42,9 @@ class YouTubePlayerComponent extends React.Component<YouTubeProps> {
             </div>    
         );
     }
+
+    pause = () => this.player.pauseVideo();
+    setVolume = (n:number) => this.player.setVolume(n);
 
     private createPlayer() {
         const playerOptions = {
@@ -72,7 +66,7 @@ class YouTubePlayerComponent extends React.Component<YouTubeProps> {
         const eventHook = eventsHookers ? eventsHookers[name] : undefined
 
         if(eventHook !== undefined) {
-            await eventHook(event);
+            await eventHook(this, event);
         }
     }
 
