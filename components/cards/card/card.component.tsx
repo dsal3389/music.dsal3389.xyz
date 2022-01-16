@@ -1,7 +1,6 @@
 import { useRouter } from 'next/router';
 import React, { useEffect, useRef } from 'react';
-import Link from 'next/link';
-import css  from './card.style.module.scss';
+import css from './card.style.module.scss';
 
 interface CardProps {
     title: string,
@@ -18,6 +17,7 @@ const CardComponent = ({ title, description, color, link, className='', onClick 
     const handleClick = (e:any) => {
         e.preventDefault();
 
+        // call onClick before routing
         if(onClick){ onClick(); }
         if(link){ router.push(link); }
     }
@@ -30,7 +30,7 @@ const CardComponent = ({ title, description, color, link, className='', onClick 
         } else {
             element.style.backgroundColor = color!;
         }
-    }, []); // call useEffect only once
+    }, ['color']); // call useEffect only once
 
     return (
         <div onClick={ handleClick } className={ css.card + ' ' + className } ref={ cardRef }>

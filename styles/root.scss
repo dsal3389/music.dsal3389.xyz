@@ -1,5 +1,6 @@
 @import "./shared.scss";
 @import "./pages/index.scss";
+@import "./pages//genre.scss";
 
 
 body {
@@ -35,6 +36,12 @@ a { color: inherit; text-decoration: none; }
 
 #main-content-wrapper {
     margin: auto;
-    padding: 0 $mediumPadding 120px $mediumPadding;
+    padding: 60px $mediumPadding 200px $mediumPadding;
     max-width: 1180px;
+}
+
+.text-overflow {
+    text-overflow: ellipsis; 
+    white-space: nowrap;
+    overflow: hidden;
 }

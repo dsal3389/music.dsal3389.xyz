@@ -1,7 +1,17 @@
+/**
+ * this component is th hart of the site, it is responsible 
+ * to play the song, display other components, provide "connection" between
+ * component like the controles and the song player, 
+ * not play the same songs over and over, bring heigh level
+ * api to other components like songPlayers, pause, play, setVolume etc...
+ * 
+ * this component is called only once accross the website, if another page
+ * want to do some actions with it, it should call the getPlayBar function
+ */
 import React, { createRef  } from 'react';
-import { FontAwesomeIcon }  from '@fortawesome/react-fontawesome';
+import { FontAwesomeIcon }   from '@fortawesome/react-fontawesome';
 
-import YouTubePlayerComponent from './players/youtube/youtube.component';
+import YouTubePlayerComponent    from './players/youtube/youtube.component';
 import SoundcloudPlayerComponent from './players/soundcloud/soundcloud.component';
 import ControlsComponent from './controls/contorls.component';
 import PlaylistComponent from './playlist/playlist.component';
@@ -9,6 +19,8 @@ import PlayerStates from 'youtube-player/dist/constants/PlayerStates';
 
 import Song from '../../config/models/song.model';
 import css  from './play-bar.style.module.scss';
+
+type BuiltinPlayer = SoundcloudPlayerComponent | YouTubePlayerComponent;
 
 interface SerializedSong {
     name: string;
@@ -30,6 +42,7 @@ interface PlayBarState {
     height: number,
     currentSong: number,
 }
+
 let __getPlayBar:PlayBar;
 
 /**
@@ -41,12 +54,11 @@ export function getPlayBar(): PlayBar{
     return __getPlayBar;
 }
 
-
 /**
  * this component can be places anywhere when the component renders,
  * it uses absolute value and always be on the bottom of the site
  */
-export default class PlayBar extends React.Component{
+export default class PlayBar extends React.PureComponent{
     state:PlayBarState = {
         playlistId: '',
         serializedPlaylist: [],
@@ -59,6 +71,7 @@ export default class PlayBar extends React.Component{
         youtube: YouTubePlayerComponent,
         soundcloud: SoundcloudPlayerComponent,
     }
+    player: BuiltinPlayer | null = null;
     private playerRef;
     private dragBar;
     private playlistContainerRef;
@@ -92,6 +105,10 @@ export default class PlayBar extends React.Component{
         }
     }
 
+    getCurrent = () => {
+        return this.state.playlist[this.state.currentSong];
+    }
+
     /* 
     insert a list of songs to start play
     the id allows the component to identify if the playlist is already playing,
@@ -115,11 +132,23 @@ export default class PlayBar extends React.Component{
 
     /* insert a song to the list */
     addToPlaylist = (song: Song) => {
+        // dont add if song already in the playlist
+        if(this.state.playlist.some(s => s.song_id === song.song_id)){
+            return;
+        }
+
         const serialized = this._serializeSong(song);
         this.setState({ 
             playlistId: '',
-            playlist: this.state.playlist.push(song),
-            serializedPlaylist: this.state.serializedPlaylist.push(serialized),
+            playlist: [...this.state.playlist, song],
+            serializedPlaylist: [...this.state.serializedPlaylist, serialized],
+        });
+    }
+
+    togglePausePlay = () => {
+        this.player?.isPaused().then((paused:boolean) => {
+            if(paused){ this.player!.play(); }
+            else { this.player!.pause(); }
         });
     }
 
@@ -138,7 +167,11 @@ export default class PlayBar extends React.Component{
      * @param index 
      */
     playSong = (index: number) => {
-        this.setState({ currentSong: index });
+        if(
+            index !== this.state.currentSong &&
+            index < this.state.serializedPlaylist.length && 
+            index >= 0
+        ){ this.setState({ currentSong: index }); }
     }
 
     render(): React.ReactNode{
@@ -171,7 +204,13 @@ export default class PlayBar extends React.Component{
                             />
                         </div>
                         <div className={ css.controllerBar }>
-                            <ControlsComponent />
+                            <ControlsComponent 
+                                events={{
+                                    back: this.playPrev,
+                                    play: this.togglePausePlay,
+                                    next: this.playNext
+                                }}
+                            />
                         </div>
                     </div>
                 </div>    
@@ -179,15 +218,18 @@ export default class PlayBar extends React.Component{
         );
     }
 
-    onSongReady = (player:any) => {
+    onSongReady = (player:BuiltinPlayer) => {
+        this.player = player;
+        this.player.setVolume(20);
     }
 
-    onSongError = (event:any) => {
+    onSongError = (player:BuiltinPlayer, event:any) => {
     }
 
-    onStateChange = (player:any, event:any) => {
+    onStateChange = (player:BuiltinPlayer, event:any) => {
         switch(event.data){
             case PlayerStates.ENDED:
+                this.player = null;
                 return this.playNext();
         }
     }

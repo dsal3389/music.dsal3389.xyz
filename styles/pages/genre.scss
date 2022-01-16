@@ -1,0 +1,17 @@
+
+#genre-page{
+    height: 100%;
+    width: 100%;
+
+    #btnsContainer{
+        margin: 16px auto;
+        display: flex;
+        justify-content: center;
+
+        .playlistBtn { margin: 0 8px; }
+    }
+    
+    .songCardContainer{
+        border-bottom: 1px solid rgba(0, 0, 0, 0.5);
+    }
+}

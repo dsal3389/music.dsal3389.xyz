@@ -1,0 +1,20 @@
+
+.btn{
+    text-align: center;
+    padding: 8px 16px;
+    background-color: #1b1b1b;
+    cursor: pointer;
+    font-size: 14px;
+    display: flex;
+    align-content: center;
+
+    p{ margin: 0 0 0 4px; } // in case a icon is added to the side
+
+    &:hover{
+        background-color: #0c0c0c;
+    }
+}
+
+.blockStyle {
+    border-radius: 4px;
+}

@@ -9,3 +9,10 @@ export const playerState = {
     BUFFERING: 3,
     CUED: 5
 }
+
+export interface AbstractPlayer {
+    play: () => void;
+    pause: () => void;
+    isPaused: () => Promise<boolean>;
+    setVolume: (n:number) => void;
+}

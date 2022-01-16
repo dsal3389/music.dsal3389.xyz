@@ -1,5 +1,5 @@
 
-$expntBtnHeight: 20px;
+$expandBtnHeight: 20px;
 $controllerBarHeight: 70px;
 
 .playbar {
@@ -14,16 +14,17 @@ $controllerBarHeight: 70px;
     box-shadow: 0 0 10px 5px #06060673;
 
     .playbarContent{
-        // overflow-y: scroll;
-        padding-top: $expntBtnHeight;
+        overflow-y: auto;
+        padding-top: $expandBtnHeight;
         height: 100%;
         display: flex;
         flex-wrap: wrap;
 
         .playerWindow {
             height: 100%;
+            min-width: 330px;
             background-color: rgba(0, 0, 0, 0.3);
-            min-width: 550px;
+            overflow: hidden;
             flex: 2;
         }
 
@@ -53,7 +54,7 @@ $controllerBarHeight: 70px;
 
 .expendBtn {
     width: 100%;
-    height: $expntBtnHeight;
+    height: $expandBtnHeight;
     text-align: center;
     background-color: rgb(10, 10, 10);
     position: fixed;

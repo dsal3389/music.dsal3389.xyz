@@ -1,5 +1,7 @@
 import React, { createRef, ReactNode } from 'react';
 import YouTubePlayer from 'youtube-player';
+import PlayerStates from 'youtube-player/dist/constants/PlayerStates';
+import { AbstractPlayer, playerState } from '../shared';
 import css from './youtube.style.module.scss';
 
 // those events supported by the player component
@@ -12,7 +14,7 @@ interface YouTubeProps {
     }
 }
 
-class YouTubePlayerComponent extends React.Component<YouTubeProps> {
+class YouTubePlayerComponent extends React.PureComponent<YouTubeProps> implements AbstractPlayer {
     containerRef;
     player: any;
 
@@ -43,8 +45,14 @@ class YouTubePlayerComponent extends React.Component<YouTubeProps> {
         );
     }
 
-    pause = () => this.player.pauseVideo();
     setVolume = (n:number) => this.player.setVolume(n);
+    play  = () => this.player.playVideo();
+    pause = () => this.player.pauseVideo();
+    isPaused = () => {
+        return this.player.getPlayerState().then((data:PlayerStates) => {
+            return data === PlayerStates.PAUSED;
+        });
+    }
 
     private createPlayer() {
         const playerOptions = {
@@ -76,4 +84,4 @@ class YouTubePlayerComponent extends React.Component<YouTubeProps> {
     }
 }
 
-export default React.memo(YouTubePlayerComponent);
+export default YouTubePlayerComponent;
