@@ -1,6 +1,11 @@
+/**
+ * display the song on the playlists page,
+ * have event callouts when some buttons are clicked to notify
+ * the parent component and take action according to the event
+ */
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Song from "../../../config/models/song.model";
-import css from "./songCard.style.module.scss";
+import css  from "./songCard.style.module.scss";
 
 interface SongCardComponent extends Song{
     addSongToPlaylist: (song:Song) => void;

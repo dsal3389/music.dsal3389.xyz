@@ -12,8 +12,8 @@ import React from 'react';
 import { List } from 'react-virtualized';
 import CardComponent from "../../cards/card/card.component";
 import PlaceholderComponent from '../../placeholder/placeholder.component';
-import css  from "./playlist.style.module.scss";
 import Song from "../../../config/models/song.model";
+import css  from "./playlist.style.module.scss";
 
 interface PlaylistProps{
     songs: Song[],
