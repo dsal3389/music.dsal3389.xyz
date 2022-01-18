@@ -18,5 +18,13 @@
                 cursor: pointer;
             }
         }
+
+        @media (max-width: 800px) {
+            flex-direction: column;
+
+            .home-card{
+                margin: $smallMargin 0;
+            }
+        }
     }
 }

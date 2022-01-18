@@ -7,10 +7,8 @@
     .songCardContent {
         flex: 1;
 
-        h4{ 
-            margin: 8px 0;
-        }
-
+        h4{  margin: 8px 0; }
+        
         .songDescription{
             p{ margin: 0; font-size: 14px; }
         }
@@ -18,16 +16,16 @@
 
     .songActions{
         display: flex;
+        align-items: center;
 
         button{
+            background-color: transparent;
+            color: rgb(200, 200, 200);
             cursor: pointer;
             height: 30px;
             width: 30px;
             border-radius: 50px;
             border: none;
-            background-color: transparent;
-            color: rgb(200, 200, 200);
-            align-self: center;
 
             &:hover{
                 background-color: rgba(0, 0, 0, 0.5);

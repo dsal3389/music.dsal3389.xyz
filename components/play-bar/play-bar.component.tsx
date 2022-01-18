@@ -75,6 +75,7 @@ export default class PlayBar extends React.PureComponent{
     private playerRef;
     private dragBar;
     private playlistContainerRef;
+    private initalDrag = 0;
 
     constructor(props: any){
         super(props);
@@ -89,20 +90,12 @@ export default class PlayBar extends React.PureComponent{
     componentDidMount(){
         const playbarRef = this.playerRef.current!;
 
-        this.dragBar.current!.onmousedown = (e) => {
-            const height = playbarRef.offsetHeight;
-            const startDrag = e.pageY;
-
-            document.onmousemove = (e) => {
-                e.preventDefault();
-                this.setState({ height: (startDrag - e.pageY) + height })
-            }
-
-            document.onmouseup = () => {
-                document.onmousemove = null;
-                document.onmouseup = null;
-            }
-        }
+        this.dragBar.current!.onmousedown = this.dargPlaybarWindow;
+        this.dragBar.current!.ontouchstart = this.phoneDargPlaybarWindow;
+    }
+    
+    songInList = (song_id:string) => {
+        return this.state.playlist.some(s => s.song_id === song_id);
     }
 
     getCurrent = () => {
@@ -285,7 +278,36 @@ export default class PlayBar extends React.PureComponent{
         };
     }
 
-    private songInList = (song_id:string) => {
-        return this.state.playlist.some(s => s.song_id === song_id);
+    private dargPlaybarWindow = (e:MouseEvent) => {
+        const playbarRef = this.playerRef.current!;
+        const height    = playbarRef.offsetHeight;
+        const startDrag = e.pageY;
+
+        document.onmousemove = (e) => {
+            e.preventDefault();
+            this.setState({ height: (startDrag - e.pageY) + height })
+        }
+
+        document.onmouseup = () => {
+            document.onmousemove = null;
+            document.onmouseup   = null;
+        }
+    }
+
+    // same as dargPlaybarWindow but for phones
+    private phoneDargPlaybarWindow = (e:TouchEvent) => {
+        const playbarRef = this.playerRef.current!;
+        const touch  = e.touches[0];
+        const height = playbarRef.offsetHeight;
+        const startDrag = touch.clientY;
+
+        document.ontouchmove = (e) => {
+            this.setState({ height: (startDrag - e.touches[0].clientY) + height });
+        }
+
+        document.ontouchend = () => {
+            document.ontouchmove = null;
+            document.ontouchend  = null;
+        }
     }
 }

@@ -38,6 +38,11 @@ a { color: inherit; text-decoration: none; }
     margin: auto;
     padding: 60px $mediumPadding 200px $mediumPadding;
     max-width: 1180px;
+
+    @media (max-width: 600px) {
+        padding-left: $smallPadding;
+        padding-right: $smallPadding;
+    }
 }
 
 .text-overflow {
