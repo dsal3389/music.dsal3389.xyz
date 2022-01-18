@@ -16,18 +16,22 @@
         }
     }
 
-    button{
-        cursor: pointer;
-        height: 30px;
-        width: 30px;
-        border-radius: 50px;
-        border: none;
-        background-color: transparent;
-        color: rgb(200, 200, 200);
-        align-self: center;
+    .songActions{
+        display: flex;
 
-        &:hover{
-            background-color: rgba(0, 0, 0, 0.5);
+        button{
+            cursor: pointer;
+            height: 30px;
+            width: 30px;
+            border-radius: 50px;
+            border: none;
+            background-color: transparent;
+            color: rgb(200, 200, 200);
+            align-self: center;
+
+            &:hover{
+                background-color: rgba(0, 0, 0, 0.5);
+            }
         }
     }
 }

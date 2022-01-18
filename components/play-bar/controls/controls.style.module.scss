@@ -2,23 +2,25 @@
 .controller {
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.3);
+    background-color: rgba(0, 0, 0, 0.5);
+    overflow: hidden;
 
     div {
-        margin: auto;
+        display: flex;
+        justify-content: center;
+        padding: 8px 0;
 
         button {
             width: 55px;
             height: 55px;
-            margin: 4px;
-            padding: 12px 24px;
+            margin: 0 4px;
+            padding: 8px;
             border-radius: 50px;
-            border: 1px solid black;
+            border: none;
             background-color: rgba(253, 253, 253, 0.05);
             color: #fefefe;
             cursor: pointer;
             font-size: 18px;
-            flex: 1;
 
             &:hover { background-color: rgba(253, 253, 253, 0.15); }
         }

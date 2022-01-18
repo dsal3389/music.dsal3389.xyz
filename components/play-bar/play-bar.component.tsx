@@ -133,7 +133,7 @@ export default class PlayBar extends React.PureComponent{
     /* insert a song to the list */
     addToPlaylist = (song: Song) => {
         // dont add if song already in the playlist
-        if(this.state.playlist.some(s => s.song_id === song.song_id)){
+        if(this.songInList(song.song_id)){
             return;
         }
 
@@ -142,6 +142,42 @@ export default class PlayBar extends React.PureComponent{
             playlistId: '',
             playlist: [...this.state.playlist, song],
             serializedPlaylist: [...this.state.serializedPlaylist, serialized],
+        });
+    }
+
+    unshiftToPlaylist = (song:Song) => {
+        // dont add if song already in the playlist
+        if(this.songInList(song.song_id)){
+            return;
+        }
+
+        const serialized = this._serializeSong(song);
+        this.setState({
+            playlistId: '',
+            playlist: [song, ...this.state.playlist],
+            serializedPlaylist: [serialized, ...this.state.serializedPlaylist]
+        });
+    }
+
+    insertToPlaylist = (index:number, song:Song) => {
+        // dont add if song already in the playlist
+        if(this.songInList(song.song_id)){
+            return;
+        }
+
+        this.setState((prevState:PlayBarState) => {
+            const serialized = this._serializeSong(song);
+            const newPlaylist = [...prevState.playlist];
+            const newSerialized = [...prevState.serializedPlaylist];
+
+            newPlaylist.splice(index, 0, song);
+            newSerialized.splice(index, 0, serialized);
+
+            return { 
+                playlistId: '',
+                playlist: newPlaylist, 
+                serializedPlaylist: newSerialized 
+            };
         });
     }
 
@@ -247,5 +283,9 @@ export default class PlayBar extends React.PureComponent{
             player: this.players[song.platform],
             events: events
         };
+    }
+
+    private songInList = (song_id:string) => {
+        return this.state.playlist.some(s => s.song_id === song_id);
     }
 }

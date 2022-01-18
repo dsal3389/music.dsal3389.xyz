@@ -17,23 +17,18 @@ interface PlaylistsProps {
 
 const Playlists = ({ songs }:PlaylistsProps) => {
     const [onClient, setOnClient] = useState(false);
-    const router  = useRouter();
+    const router = useRouter();
 
-    const playPlaylist = () => {
-        getPlayBar().setPlaylist(router.query.genre as string, songs);
-    }
-
-    const addSongToPlaylist = (song:Song) => {
-        getPlayBar().addToPlaylist(song);
-    }
+    const playPlaylist = () => getPlayBar().setPlaylist(router.query.genre as string, songs);
+    const playSongNow  = (song:Song) => getPlayBar().unshiftToPlaylist(song);
+    const addSongToPlaylist = (song:Song) => getPlayBar().addToPlaylist(song);
     
-
     const renderSongCard = ({ index, isScrolling, isVisible, key, style }:any) => {
         let content = <p>...</p>
 
         if(!isScrolling || isVisible){
             const song = songs[index];
-            content = <SongCardComponent {...song} addSongToPlaylist={ addSongToPlaylist } />
+            content = <SongCardComponent {...song} addSongToPlaylist={ addSongToPlaylist } playSongNow={ playSongNow } />
         }
 
         return (
@@ -59,7 +54,7 @@ const Playlists = ({ songs }:PlaylistsProps) => {
                             <div id="btnsContainer">
                                 <ButtonComponent className='playlistBtn' onClick={ playPlaylist }>
                                     <FontAwesomeIcon icon='music'/>
-                                    <p>add playlist</p>
+                                    <p>play playlist</p>
                                 </ButtonComponent>
                             </div>
 
