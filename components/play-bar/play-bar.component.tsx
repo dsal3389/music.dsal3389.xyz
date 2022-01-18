@@ -296,6 +296,8 @@ export default class PlayBar extends React.PureComponent{
 
     // same as dargPlaybarWindow but for phones
     private phoneDargPlaybarWindow = (e:TouchEvent) => {
+        e.preventDefault();
+        
         const playbarRef = this.playerRef.current!;
         const touch  = e.touches[0];
         const height = playbarRef.offsetHeight;
