@@ -75,13 +75,15 @@ export default class PlayBar extends React.PureComponent{
     private playerRef;
     private dragBar;
     private playlistContainerRef;
+    private controllerContainerRef;
 
     constructor(props: any){
         super(props);
         
         this.playerRef = createRef<HTMLDivElement>();
         this.dragBar   = createRef<HTMLDivElement>();
-        this.playlistContainerRef = createRef<HTMLDivElement>();
+        this.playlistContainerRef   = createRef<HTMLDivElement>();
+        this.controllerContainerRef = createRef<HTMLDivElement>();
 
         __getPlayBar = this;
     }
@@ -221,7 +223,11 @@ export default class PlayBar extends React.PureComponent{
                     </div>
 
                     <div className={ css.side }>
-                        <div className={ css.playlistWindow } ref={ this.playlistContainerRef }>
+                        <div 
+                            className={ css.playlistWindow } 
+                            ref={ this.playlistContainerRef } 
+                            style={{ height: `calc(100% - ${this.controllerContainerRef.current?.offsetHeight || 0}px)` }}
+                        >
                             <PlaylistComponent 
                                 songs={ this.state.playlist } 
                                 current={ this.state.currentSong } 
@@ -229,8 +235,8 @@ export default class PlayBar extends React.PureComponent{
                                 height={ this.playlistContainerRef.current?.offsetHeight || 0 }
                             />
                         </div>
-                        <div className={ css.controllerBar }>
-                            <ControlsComponent 
+                        <div className={ css.controllerBar } ref={ this.controllerContainerRef }>
+                            <ControlsComponent
                                 events={{
                                     back: this.playPrev,
                                     play: this.togglePausePlay,

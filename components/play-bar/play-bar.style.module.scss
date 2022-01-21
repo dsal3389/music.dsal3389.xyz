@@ -1,29 +1,29 @@
 
 $expandBtnHeight: 20px;
-$controllerBarHeight: 70px;
 
 .playbar {
+    width: 100%;
+    max-height: 550px;
+    min-height: 180px;
+    box-shadow: 0 0 10px 5px #06060673;
+    background-color: transparent;
+    position: fixed;
     bottom: 0;
     left: 0;
     right: 0;
-    position: fixed;
-    background-color: rgb(14, 14, 14);
-    max-height: 550px;
-    min-height: 180px;
-    width: 100%;
-    box-shadow: 0 0 10px 5px #06060673;
+    overflow-y: hidden;
 
     .playbarContent{
+        height: 100%;
         overflow-y: auto;
         padding-top: $expandBtnHeight;
-        height: 100%;
         display: flex;
         flex-wrap: wrap;
 
         .playerWindow {
             height: 100%;
             min-width: 330px;
-            background-color: rgba(0, 0, 0, 0.3);
+            background-color: rgb(14, 14, 14);;
             overflow: hidden;
             flex: 2;
         }
@@ -31,22 +31,24 @@ $controllerBarHeight: 70px;
         .side{
             width: 100%;
             height: 100%;
+            min-width: 300px; 
             position: relative;
             flex: 1;
-            min-width: 300px;
 
             .playlistWindow { 
-                height: calc(100% - #{$controllerBarHeight});
                 width: 100%;
+                height: 100%;
                 max-width: 1000;
                 overflow: hidden;
+                box-shadow: inset 0px -35px 25px -20px rgba(0, 0, 0, .5);
+                background-color: rgba(0, 0, 0, .7);
+                backdrop-filter: blur(12px); 
             }
 
             .controllerBar{
                 width: 100%;
-                height: $controllerBarHeight;
-                position: absolute;
-                bottom: 0;
+                height: min-content;
+                background-color: #0c0c0c;
             }
         }
     }
