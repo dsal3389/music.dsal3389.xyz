@@ -75,7 +75,6 @@ export default class PlayBar extends React.PureComponent{
     private playerRef;
     private dragBar;
     private playlistContainerRef;
-    private initalDrag = 0;
 
     constructor(props: any){
         super(props);
@@ -88,9 +87,7 @@ export default class PlayBar extends React.PureComponent{
     }
 
     componentDidMount(){
-        const playbarRef = this.playerRef.current!;
-
-        this.dragBar.current!.onmousedown = this.dargPlaybarWindow;
+        this.dragBar.current!.onmousedown  = this.dargPlaybarWindow;
         this.dragBar.current!.ontouchstart = this.phoneDargPlaybarWindow;
     }
     

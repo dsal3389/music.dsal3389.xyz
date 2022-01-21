@@ -1,7 +1,7 @@
 import React, { createRef, ReactNode } from 'react';
 import YouTubePlayer from 'youtube-player';
 import PlayerStates from 'youtube-player/dist/constants/PlayerStates';
-import { AbstractPlayer, playerState } from '../shared';
+import { AbstractPlayer } from '../shared';
 import css from './youtube.style.module.scss';
 
 // those events supported by the player component
@@ -59,12 +59,16 @@ class YouTubePlayerComponent extends React.PureComponent<YouTubeProps> implement
             width: '100%',
             height: '100%',
             videoId: this.props.id,
+            playerVars: {
+                controls: 0 as 0, // for some reason typescript gives an error
+                autoplay: 1 as 1
+            }
         };
 
         this.player = YouTubePlayer(this.containerRef.current!, playerOptions);
 
         // hooks
-        this.player.on('ready', this._onReady);
+        this.player.on('ready', (e:any) => this.callEvent('ready', e));
         this.player.on('stateChange', (e:any) => this.callEvent('stateChange', e));
         this.player.on('error', (e:any) => this.callEvent('error', e))
     }
@@ -76,11 +80,6 @@ class YouTubePlayerComponent extends React.PureComponent<YouTubeProps> implement
         if(eventHook !== undefined) {
             await eventHook(this, event);
         }
-    }
-
-    private _onReady = (event: any) => {
-        event.target.playVideo();
-        this.callEvent('ready', event);
     }
 }
 
