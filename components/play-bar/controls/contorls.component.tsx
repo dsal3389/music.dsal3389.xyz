@@ -7,18 +7,22 @@ import React from 'react';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import css from "./controls.style.module.scss";
 
-type controllerEvent = "play" | "back" | "next";
+type controllerEvent = "play" | "back" | "next" | "volumeChange";
 
 interface ControlsProps {
     events:{
-        [event in controllerEvent]: (e:any) => void
+        play: () => void,
+        back: () => void,
+        next: () => void,
+        volumeChange?: (n: number) => void,
     }
 }
 
 function ControlsComponent({ events }: ControlsProps) {
+
     return (
         <div className={ css.controller }>
-            <div>
+            <div className={ css.songController }>
                 <button onClick={ events.back }>
                     <FontAwesomeIcon icon='step-backward'/>
                 </button>
@@ -29,6 +33,18 @@ function ControlsComponent({ events }: ControlsProps) {
                     <FontAwesomeIcon icon='step-forward'/>
                 </button>
             </div>
+
+            
+            { events.volumeChange ? 
+                // render volume controller only if "volumeChange" event passed
+                <div className={ css.volumeController }>
+                    <span>
+                        <FontAwesomeIcon icon='volume-up' />
+                    </span>    
+                    <input type='range' min='0' max='100' 
+                        onChange={ (e:any) => events.volumeChange!(e.target.value) } />
+                </div> : null
+            }
         </div>
     );
 }

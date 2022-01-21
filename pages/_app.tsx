@@ -2,7 +2,7 @@ import type { AppProps } from 'next/app'
 import { Fragment } from 'react';
 import { library }  from '@fortawesome/fontawesome-svg-core';
 import {
-  faGripLines, faPlus,
+  faGripLines, faPlus, faVolumeUp,
   faStepBackward, faStepForward, faPlay, faPause, faMusic
 } from '@fortawesome/free-solid-svg-icons';
 
@@ -11,7 +11,7 @@ import '../styles/root.scss'
 import HeaderComponent from '../components/header/header.component';
 
 library.add(
-  faGripLines, faPlus, faMusic,
+  faGripLines, faPlus, faMusic, faVolumeUp,
   faStepBackward, faStepForward, faPlay, faPause
 );
 

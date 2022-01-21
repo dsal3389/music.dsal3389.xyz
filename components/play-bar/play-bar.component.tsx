@@ -76,6 +76,8 @@ export default class PlayBar extends React.PureComponent{
     private dragBar;
     private playlistContainerRef;
     private controllerContainerRef;
+    private isMobile = false;
+    private volume = 100;
 
     constructor(props: any){
         super(props);
@@ -85,12 +87,22 @@ export default class PlayBar extends React.PureComponent{
         this.playlistContainerRef   = createRef<HTMLDivElement>();
         this.controllerContainerRef = createRef<HTMLDivElement>();
 
+        // run only on frotend
+        if(process.browser){
+            this.isMobile = window.orientation > -1;
+            this.volume   = !this.isMobile ? parseInt(window.localStorage.getItem('volume') || '50') : 100;
+        }
+
         __getPlayBar = this;
     }
 
     componentDidMount(){
-        this.dragBar.current!.onmousedown  = this.dargPlaybarWindow;
-        this.dragBar.current!.ontouchstart = this.phoneDargPlaybarWindow;
+        if(this.isMobile){
+            this.dragBar.current!.ontouchstart = this.phoneDargPlaybarWindow;
+        } else {
+            this.dragBar.current!.onmousedown  = this.dargPlaybarWindow;
+        }
+        
     }
     
     songInList = (song_id:string) => {
@@ -202,6 +214,11 @@ export default class PlayBar extends React.PureComponent{
         ){ this.setState({ currentSong: index }); }
     }
 
+    setVolume = (n: number) => {
+        this.player?.setVolume(n);
+        window.localStorage.setItem('volume', n.toString());
+    }
+
     render(): React.ReactNode{
         const song = this.state.serializedPlaylist[this.state.currentSong];
         const playBarStyle = {
@@ -240,7 +257,8 @@ export default class PlayBar extends React.PureComponent{
                                 events={{
                                     back: this.playPrev,
                                     play: this.togglePausePlay,
-                                    next: this.playNext
+                                    next: this.playNext,
+                                    volumeChange: !this.isMobile ? this.setVolume : undefined
                                 }}
                             />
                         </div>
@@ -252,7 +270,9 @@ export default class PlayBar extends React.PureComponent{
 
     onSongReady = (player:BuiltinPlayer) => {
         this.player = player;
-        this.player.setVolume(20);
+        
+        this.player.setVolume(this.volume);
+        this.player.play();
     }
 
     onSongError = (player:BuiltinPlayer, event:any) => {
