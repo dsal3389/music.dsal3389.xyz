@@ -97,12 +97,8 @@ export default class PlayBar extends React.PureComponent{
     }
 
     componentDidMount(){
-        if(this.isMobile){
-            this.dragBar.current!.ontouchstart = this.phoneDargPlaybarWindow;
-        } else {
-            this.dragBar.current!.onmousedown  = this.dargPlaybarWindow;
-        }
-        
+        this.dragBar.current!.ontouchstart = this.phoneDargPlaybarWindow;
+        this.dragBar.current!.onmousedown  = this.dargPlaybarWindow;
     }
     
     songInList = (song_id:string) => {

@@ -3,6 +3,7 @@
     width: 100%;
     height: 100%;
     display: flex;
+    position: relative;
 
     .songCardContent {
         flex: 1;
@@ -17,6 +18,13 @@
     .songActions{
         display: flex;
         align-items: center;
+        box-shadow: -13px 0px 15px -9px #181818;
+        background-color: #181818;
+        overflow: hidden;
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        top: 0;
 
         button{
             background-color: transparent;

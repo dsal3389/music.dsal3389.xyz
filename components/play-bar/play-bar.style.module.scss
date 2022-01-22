@@ -7,11 +7,11 @@ $expandBtnHeight: 20px;
     min-height: 180px;
     box-shadow: 0 0 10px 5px #06060673;
     background-color: transparent;
+    overflow-y: hidden;
     position: fixed;
     bottom: 0;
     left: 0;
     right: 0;
-    overflow-y: hidden;
 
     .playbarContent{
         height: 100%;
@@ -22,8 +22,7 @@ $expandBtnHeight: 20px;
 
         .playerWindow {
             height: 100%;
-            min-width: 330px;
-            background-color: rgb(14, 14, 14);;
+            background-color: #0e0e0e;;
             overflow: hidden;
             flex: 2;
         }
@@ -34,15 +33,16 @@ $expandBtnHeight: 20px;
             min-width: 300px; 
             position: relative;
             flex: 1;
+            display: flex;
+            flex-direction: column;
 
             .playlistWindow { 
                 width: 100%;
                 height: 100%;
                 max-width: 1000;
                 overflow: hidden;
-                box-shadow: inset 0px -35px 25px -20px rgba(0, 0, 0, .5);
-                background-color: rgba(0, 0, 0, .7);
-                backdrop-filter: blur(12px); 
+                box-shadow: inset 0px -35px 25px -20px #0c0c0c;
+                background-color: #141414;
             }
 
             .controllerBar{
@@ -50,6 +50,12 @@ $expandBtnHeight: 20px;
                 height: min-content;
                 background-color: #0c0c0c;
             }
+        }
+
+        @media (max-width: 670px) {
+            flex-direction: column;
+            
+            .side{ flex-direction: column-reverse; }
         }
     }
 }

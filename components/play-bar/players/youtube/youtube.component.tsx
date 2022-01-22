@@ -60,7 +60,6 @@ class YouTubePlayerComponent extends React.PureComponent<YouTubeProps> implement
             height: '100%',
             videoId: this.props.id,
             playerVars: {
-                controls: 0 as 0, // for some reason typescript gives an error
                 autoplay: 1 as 1
             }
         };
