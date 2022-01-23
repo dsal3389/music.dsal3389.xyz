@@ -8,7 +8,7 @@
  * so for that, the playlist only render some of the songs
  * with 'react-virtualized' to reduce the overhead
  */
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { List } from 'react-virtualized';
 import CardComponent from "../../cards/card/card.component";
 import PlaceholderComponent from '../../placeholder/placeholder.component';
@@ -19,10 +19,11 @@ interface PlaylistProps{
     songs: Song[],
     current: number,
     onChange: (i:number) => void,
-    height: number,
 }
 
-function PlaylistComponent({ songs, current, onChange, height }:PlaylistProps){
+function PlaylistComponent({ songs, current, onChange }:PlaylistProps){
+    const [height, setHeight] = useState(0);
+    const listRef = useRef<HTMLDivElement>(null);
     const songsRender = ({
         index, 
         isScrolling,
@@ -51,8 +52,18 @@ function PlaylistComponent({ songs, current, onChange, height }:PlaylistProps){
         );
     }
 
+    useEffect(() => {
+        const onHeightChange = () => {
+            const newHeight = listRef.current!.parentElement?.clientHeight || height;
+            if(newHeight !== height){ setHeight(newHeight); }
+        };
+
+        document.addEventListener("onPlaybarHeightChange", onHeightChange);
+        return () => { document.removeEventListener("onPlaybarHeightChange", onHeightChange); }
+    }, []);
+
     return (
-        <div className={ css.playlist }>
+        <div className={ css.playlist } ref={ listRef }>
             <List
                 width={ 1000 }
                 height={ height }

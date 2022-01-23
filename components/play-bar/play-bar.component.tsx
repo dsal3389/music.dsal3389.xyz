@@ -39,7 +39,6 @@ interface PlayBarState {
     serializedPlaylist: SerializedSong[],
     playlist: Song[],
     playing: boolean,
-    height: number,
     currentSong: number,
 }
 
@@ -59,12 +58,13 @@ export function getPlayBar(): PlayBar{
  * it uses absolute value and always be on the bottom of the site
  */
 export default class PlayBar extends React.PureComponent{
+    heightChangeEvent;
+
     state:PlayBarState = {
         playlistId: '',
         serializedPlaylist: [],
         playlist: [],
         playing: false,
-        height: 0,
         currentSong: 0 // song index
     };
     players: PlayBarPlayers = {
@@ -74,23 +74,23 @@ export default class PlayBar extends React.PureComponent{
     player: BuiltinPlayer | null = null;
     private playerRef;
     private dragBar;
-    private playlistContainerRef;
     private controllerContainerRef;
     private isMobile = false;
     private volume = 100;
+    private height = 0;
 
     constructor(props: any){
         super(props);
         
         this.playerRef = createRef<HTMLDivElement>();
         this.dragBar   = createRef<HTMLDivElement>();
-        this.playlistContainerRef   = createRef<HTMLDivElement>();
         this.controllerContainerRef = createRef<HTMLDivElement>();
 
         // run only on frotend
         if(process.browser){
             this.isMobile = window.orientation > -1;
             this.volume   = !this.isMobile ? parseInt(window.localStorage.getItem('volume') || '50') : 100;
+            this.heightChangeEvent = new CustomEvent("onPlaybarHeightChange", { detail: this.height });
         }
 
         __getPlayBar = this;
@@ -217,14 +217,10 @@ export default class PlayBar extends React.PureComponent{
 
     render(): React.ReactNode{
         const song = this.state.serializedPlaylist[this.state.currentSong];
-        const playBarStyle = {
-            height: this.state.height
-        };
 
         return (
             <div 
                 className={ css.playbar }
-                style={ playBarStyle }
                 ref={ this.playerRef }
             >
                 <div className={ css.expendBtn } ref={ this.dragBar }>
@@ -238,14 +234,12 @@ export default class PlayBar extends React.PureComponent{
                     <div className={ css.side }>
                         <div 
                             className={ css.playlistWindow } 
-                            ref={ this.playlistContainerRef } 
                             style={{ height: `calc(100% - ${this.controllerContainerRef.current?.offsetHeight || 0}px)` }}
                         >
                             <PlaylistComponent 
                                 songs={ this.state.playlist } 
                                 current={ this.state.currentSong } 
                                 onChange={ this.playSong }
-                                height={ this.playlistContainerRef.current?.offsetHeight || 0 }
                             />
                         </div>
                         <div className={ css.controllerBar } ref={ this.controllerContainerRef }>
@@ -304,7 +298,7 @@ export default class PlayBar extends React.PureComponent{
 
         document.onmousemove = (e) => {
             e.preventDefault();
-            this.setState({ height: (startDrag - e.pageY) + height })
+            this.setPlaybarHeight((startDrag - e.pageY) + height);
         }
 
         document.onmouseup = () => {
@@ -323,12 +317,20 @@ export default class PlayBar extends React.PureComponent{
         const startDrag = touch.clientY;
 
         document.ontouchmove = (e) => {
-            this.setState({ height: (startDrag - e.touches[0].clientY) + height });
+            this.setPlaybarHeight((startDrag - e.touches[0].clientY) + height);
         }
 
         document.ontouchend = () => {
             document.ontouchmove = null;
             document.ontouchend  = null;
         }
+    }
+
+    private setPlaybarHeight = (height:number) => {
+        this.playerRef.current!.style.height = `${height}px`;
+        this.height = height;
+
+        // attach to the document so every component can globaly access this event
+        document.dispatchEvent(this.heightChangeEvent!);
     }
 }
