@@ -66,7 +66,7 @@ export default class PlayBar extends React.PureComponent{
         serializedPlaylist: [],
         playlist: [],
         playing: false,
-        currentSong: -1 // song index
+        currentSong: 0 // song index
     };
     players: PlayBarPlayers = {
         youtube: YouTubePlayerComponent,
@@ -95,7 +95,7 @@ export default class PlayBar extends React.PureComponent{
             this.isMobile = window.orientation > -1;
             this.volume   = !this.isMobile ? parseInt(window.localStorage.getItem('volume') || '50') : 100;
             this.heightChangeEvent = new CustomEvent("onPlaybarHeightChange", { detail: this.height });
-            this.songChangeEvent = new CustomEvent("onSongChange", { detail: this.currentSong });
+            this.songChangeEvent   = new CustomEvent("onSongChange", { detail: this.currentSong });
         }
 
         __getPlayBar = this;
@@ -107,7 +107,7 @@ export default class PlayBar extends React.PureComponent{
     }
 
     componentDidUpdate(prevProps:{}, prevState:PlayBarState){
-        if(prevState.currentSong !== this.state.currentSong){
+        if(prevState.currentSong === 0 || prevState.currentSong !== this.state.currentSong){
             Object.assign(this.currentSong, this.getCurrent());
             document.dispatchEvent(this.songChangeEvent!);
         }

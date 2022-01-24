@@ -5,21 +5,40 @@
     position: fixed;
     background-color: rgba(0, 0, 0, 0.3);
     backdrop-filter: blur(8px);
-    z-index: 10000;
     user-select: none;
+    z-index: 10000;
 
-    .logo{
-        width: 45px;
-        height: 40px;
-        padding: 5px 0;
-        margin: 5px auto;
-        cursor: pointer;
+    .headerContent{
         position: relative;
-        transition-duration: 200ms;
-        opacity: .7;
+        height: 100%;
+        margin: 5px auto;
+        width: min-content;
+        display: flex;
 
-        &:hover{
-            opacity: 1;
+        .logo{
+            width: 45px;
+            height: 40px;
+            min-width: 45px;
+            padding: 5px 0;
+            position: relative;
+            transition-duration: 200ms;
+            cursor: pointer;
+            opacity: .7;
+
+            &:hover{ opacity: 1; }
+        }
+
+        .songInfo {
+            color: #9c9c9c;
+            animation: expandIn 1s ease-in-out forwards;
+            overflow: hidden;
+
+            p{ margin: 0; font-size: 14px; }
+        }
+
+        @keyframes expandIn {
+            0%  { opacity: 0; width: 0; }
+            100%{ opacity: 1; width: 100%; }
         }
     }
 }

@@ -1,18 +1,16 @@
-import React, { useEffect }  from 'react';
+import React, { Fragment, useEffect, useState }  from 'react';
 import Image  from 'next/image';
 import Link   from 'next/link';
 import css    from './header.style.module.scss';
 import routes from '../../config/routes/routes';
-import Song from '../../config/models/song.model';
 
-/**
- * future note, display the current song information up top
- */
 function HeaderComponent(){
+    const [song, setSong] = useState<any>(null);
 
     useEffect(() => {
-        const onSongChange = (e:any) => {
-            console.log(e.detail);
+        const onSongChange = (e:any) => { 
+            const newSong = e.detail;
+            setSong({ ...newSong });
         }
 
         document.addEventListener("onSongChange", onSongChange);
@@ -21,11 +19,19 @@ function HeaderComponent(){
 
     return (
         <header className={ css.mainHeader }>
-            <Link href={ routes.home }>
-                <div className={ css.logo }>
-                    <Image src='/music.png' alt='music.dsal3389 img' layout='fill' />
-                </div>
-            </Link>   
+            <div className={ css.headerContent }>
+                <Link href={ routes.home }>
+                    <div className={ css.logo }>
+                        <Image src='/music.png' alt='music.dsal3389 img' layout='fill' />
+                    </div>
+                </Link>
+                { song ? 
+                    <div className={ css.songInfo }>
+                        <p className='text-overflow'>{ song.name }</p>
+                        <small className='text-overflow'>by: { song.artists } | platform: { song.platform }</small>
+                    </div>
+                : null}
+            </div>    
         </header>
     );
 }
