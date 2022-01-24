@@ -18,6 +18,11 @@ library.add(
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <Fragment>
+      <div id="topMessage">
+        <h2>notice</h2>
+        <p>I do not own any listed song on the website, for legal reasons, contact: <span>dsal3389@gmail.com</span></p>
+      </div>
+      
       <HeaderComponent />
 
       <div id="main-content-wrapper">

@@ -36,7 +36,7 @@ a { color: inherit; text-decoration: none; }
 
 #main-content-wrapper {
     margin: auto;
-    padding: 60px $mediumPadding 200px $mediumPadding;
+    padding: 0 $mediumPadding 200px $mediumPadding;
     max-width: 1180px;
 
     @media (max-width: 600px) {
@@ -49,4 +49,33 @@ a { color: inherit; text-decoration: none; }
     text-overflow: ellipsis; 
     white-space: nowrap;
     overflow: hidden;
+}
+
+#topMessage{
+    user-select: none;
+    position: relative;
+    height: max-content;
+    color: rgb(167, 167, 167);
+    background-color: rgba(0, 0, 0, .4);
+    padding: $smallPadding;
+    align-items: center;
+    max-height: 150px;
+    overflow: hidden;
+    display: flex;
+    width: 100%;
+    top: 0;
+
+    h2 { 
+        margin: 0; 
+        font-size: 14px; 
+        margin: 4px;
+    }
+
+    p { 
+        margin: 0; 
+        word-break: break-all; 
+        font-size: 12px;
+
+        span { user-select: text; }
+    }
 }
