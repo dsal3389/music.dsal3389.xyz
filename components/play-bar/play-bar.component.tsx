@@ -58,6 +58,7 @@ export function getPlayBar(): PlayBar{
  * it uses absolute value and always be on the bottom of the site
  */
 export default class PlayBar extends React.PureComponent{
+    songChangeEvent;
     heightChangeEvent;
 
     state:PlayBarState = {
@@ -65,7 +66,7 @@ export default class PlayBar extends React.PureComponent{
         serializedPlaylist: [],
         playlist: [],
         playing: false,
-        currentSong: 0 // song index
+        currentSong: -1 // song index
     };
     players: PlayBarPlayers = {
         youtube: YouTubePlayerComponent,
@@ -79,6 +80,9 @@ export default class PlayBar extends React.PureComponent{
     private volume = 100;
     private height = 0;
 
+    // this is for the custome event onSongChange
+    private currentSong:Song | {} = {};
+
     constructor(props: any){
         super(props);
         
@@ -91,6 +95,7 @@ export default class PlayBar extends React.PureComponent{
             this.isMobile = window.orientation > -1;
             this.volume   = !this.isMobile ? parseInt(window.localStorage.getItem('volume') || '50') : 100;
             this.heightChangeEvent = new CustomEvent("onPlaybarHeightChange", { detail: this.height });
+            this.songChangeEvent = new CustomEvent("onSongChange", { detail: this.currentSong });
         }
 
         __getPlayBar = this;
@@ -99,6 +104,13 @@ export default class PlayBar extends React.PureComponent{
     componentDidMount(){
         this.dragBar.current!.ontouchstart = this.phoneDargPlaybarWindow;
         this.dragBar.current!.onmousedown  = this.dargPlaybarWindow;
+    }
+
+    componentDidUpdate(prevProps:{}, prevState:PlayBarState){
+        if(prevState.currentSong !== this.state.currentSong){
+            Object.assign(this.currentSong, this.getCurrent());
+            document.dispatchEvent(this.songChangeEvent!);
+        }
     }
     
     songInList = (song_id:string) => {
@@ -220,7 +232,9 @@ export default class PlayBar extends React.PureComponent{
             index !== this.state.currentSong &&
             index < this.state.serializedPlaylist.length && 
             index >= 0
-        ){ this.setState({ currentSong: index }); }
+        ){ 
+            this.setState({ currentSong: index });
+        }
     }
 
     setVolume = (n: number) => {
