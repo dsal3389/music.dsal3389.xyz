@@ -20,7 +20,7 @@ const Playlists = ({ songs }:PlaylistsProps) => {
     const router = useRouter();
 
     const playPlaylist = () => getPlayBar().setPlaylist(router.query.genre as string, songs);
-    const playSongNow  = (song:Song) => getPlayBar().unshiftToPlaylist(song);
+    const playSongNow  = (song:Song) => getPlayBar().playOrInsert(song);
     const addSongToPlaylist = (song:Song) => getPlayBar().addToPlaylist(song);
     
     const renderSongCard = ({ index, isScrolling, isVisible, key, style }:any) => {

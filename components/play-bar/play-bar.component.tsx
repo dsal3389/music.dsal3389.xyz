@@ -105,6 +105,10 @@ export default class PlayBar extends React.PureComponent{
         return this.state.playlist.some(s => s.song_id === song_id);
     }
 
+    getSongIndex = (song_id:string) => {
+        return this.state.playlist.findIndex((s:Song) => s.song_id === song_id);
+    }
+
     getCurrent = () => {
         return this.state.playlist[this.state.currentSong];
     }
@@ -176,7 +180,7 @@ export default class PlayBar extends React.PureComponent{
             return { 
                 playlistId: '',
                 playlist: newPlaylist, 
-                serializedPlaylist: newSerialized 
+                serializedPlaylist: newSerialized,
             };
         });
     }
@@ -194,6 +198,15 @@ export default class PlayBar extends React.PureComponent{
 
     playNext = () => {
         this.playSong(this.state.currentSong + 1);
+    }
+
+    playOrInsert = (song:Song) => {
+        if(this.songInList(song.song_id)){
+            this.playSong(this.getSongIndex(song.song_id));
+        } else {
+            // set the current song for the new song so its start playing
+            this.insertToPlaylist(this.state.currentSong, song);
+        }
     }
 
     /**
@@ -219,10 +232,7 @@ export default class PlayBar extends React.PureComponent{
         const song = this.state.serializedPlaylist[this.state.currentSong];
 
         return (
-            <div 
-                className={ css.playbar }
-                ref={ this.playerRef }
-            >
+            <div className={ css.playbar } ref={ this.playerRef }>
                 <div className={ css.expendBtn } ref={ this.dragBar }>
                     <FontAwesomeIcon icon='grip-lines'/>
                 </div>
